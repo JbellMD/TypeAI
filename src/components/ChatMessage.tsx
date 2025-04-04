@@ -1,87 +1,122 @@
-import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import { Box, Text, Flex } from '@chakra-ui/react';
 import { FaUser, FaRobot } from 'react-icons/fa';
-import ReactMarkdown from 'react-markdown';
-import { Message, MessageRole } from '../types/chat';
+import { motion } from 'framer-motion';
 import { formatCodeBlocks } from '../utils/chatUtils';
+import TypingAnimation from './TypingAnimation';
+
+const MotionBox = motion(Box);
 
 interface ChatMessageProps {
-  message: Message;
+  message: {
+    id: string;
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp: number;
+  };
+  isLatest?: boolean;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-  // Define colors based on role
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest = false }) => {
+  const [showTyping, setShowTyping] = useState(false);
+  const [formattedContent, setFormattedContent] = useState('');
+  
+  // Format code blocks in the message
+  useEffect(() => {
+    const formatted = formatCodeBlocks(message.content);
+    setFormattedContent(formatted);
+    
+    // Only show typing animation for the latest assistant message
+    if (message.role === 'assistant' && isLatest) {
+      setShowTyping(true);
+    }
+  }, [message, isLatest]);
+
+  const handleTypingComplete = () => {
+    setShowTyping(false);
+  };
+
   const getBgColor = () => {
     switch (message.role) {
-      case MessageRole.USER:
-        return 'gray.100';
-      case MessageRole.ASSISTANT:
-        return 'blue.50';
-      case MessageRole.SYSTEM:
-        return 'purple.50';
+      case 'user':
+        return 'var(--message-user-bg)';
+      case 'assistant':
+        return 'var(--message-assistant-bg)';
       default:
-        return 'transparent';
+        return 'gray.100';
     }
   };
-  
+
   const getIconElement = () => {
     switch (message.role) {
-      case MessageRole.USER:
+      case 'user':
         return <FaUser />;
-      case MessageRole.ASSISTANT:
+      case 'assistant':
         return <FaRobot />;
       default:
         return null;
     }
   };
-  
+
   const getName = () => {
     switch (message.role) {
-      case MessageRole.USER:
+      case 'user':
         return 'You';
-      case MessageRole.ASSISTANT:
+      case 'assistant':
         return 'TypeAI';
-      case MessageRole.SYSTEM:
-        return 'System';
       default:
         return '';
     }
   };
-  
-  // Format the content to properly display code blocks
-  const formattedContent = formatCodeBlocks(message.content);
-  
+
   return (
-    <Box 
-      p={4} 
-      bg={getBgColor()} 
-      borderRadius="md" 
+    <MotionBox
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
       mb={4}
-      width="100%"
+      className={`message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
     >
-      <Flex alignItems="center" mb={2}>
-        <Box 
-          bg={message.role === MessageRole.USER ? 'blue.500' : 'green.500'} 
+      <Flex>
+        <Box
+          bg={message.role === 'user' ? 'blue.500' : 'gray.300'}
           color="white"
           borderRadius="full"
           p={2}
-          mr={2}
-          fontSize="sm"
+          mr={3}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          fontSize="lg"
         >
           {getIconElement()}
         </Box>
-        <Flex justifyContent="space-between" width="100%">
-          <Text fontWeight="bold">{getName()}</Text>
-          <Text fontSize="sm" color="gray.500">
-            {new Date(message.timestamp).toLocaleTimeString()}
-          </Text>
-        </Flex>
+        
+        <Box
+          flex="1"
+          bg={getBgColor()}
+          p={4}
+          borderRadius="lg"
+          className="markdown-content"
+        >
+          {showTyping ? (
+            <TypingAnimation 
+              text={message.content} 
+              speed={20} 
+              onComplete={handleTypingComplete} 
+            />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: formattedContent }} />
+          )}
+        </Box>
       </Flex>
-      
-      <Box className="markdown-content" pl={10}>
-        <ReactMarkdown>{formattedContent}</ReactMarkdown>
-      </Box>
-    </Box>
+      <Flex justifyContent="space-between" width="100%" mt={2}>
+        <Text fontWeight="bold">{getName()}</Text>
+        <Text fontSize="sm" color="gray.500">
+          {new Date(message.timestamp).toLocaleTimeString()}
+        </Text>
+      </Flex>
+    </MotionBox>
   );
 };
 

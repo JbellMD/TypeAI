@@ -7,14 +7,15 @@ import { v4 as uuidv4 } from 'uuid';
 interface UseChatOptions {
   initialMessages?: Message[];
   onError?: (error: Error) => void;
+  sessionId?: string;
 }
 
 export const useChat = (options: UseChatOptions = {}) => {
-  const { initialMessages = [], onError } = options;
+  const { initialMessages = [], onError, sessionId = uuidv4() } = options;
   
   // State for the current chat session
   const [session, setSession] = useState<ChatSession>({
-    id: uuidv4(),
+    id: sessionId,
     title: 'New Chat',
     messages: initialMessages,
     createdAt: new Date(),
@@ -132,7 +133,8 @@ export const useChat = (options: UseChatOptions = {}) => {
     sendMessage,
     addMessage,
     clearChat,
-    session
+    session,
+    setSession
   };
 };
 
