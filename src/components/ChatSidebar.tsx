@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Box, 
   Flex, 
   Text, 
   Button, 
-  Divider,
   IconButton,
   Input
 } from '@chakra-ui/react';
@@ -15,6 +14,11 @@ import { ChatSession } from '../types/chat';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
+
+// Custom Divider component
+const Divider = ({ mb }: { mb?: number }) => (
+  <Box borderBottom="1px solid" borderColor="var(--border-color)" mb={mb} />
+);
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
@@ -121,24 +125,26 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                   />
                   <IconButton
                     aria-label="Save"
-                    icon={<FaCheck />}
                     size="sm"
                     colorScheme="green"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSaveEdit(session.id);
                     }}
-                  />
+                  >
+                    <FaCheck />
+                  </IconButton>
                   <IconButton
                     aria-label="Cancel"
-                    icon={<FaTimes />}
                     size="sm"
                     ml={1}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCancelEdit();
                     }}
-                  />
+                  >
+                    <FaTimes />
+                  </IconButton>
                 </Flex>
               ) : (
                 <Flex justifyContent="space-between" alignItems="center">
@@ -155,17 +161,17 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     <Flex>
                       <IconButton
                         aria-label="Edit"
-                        icon={<FaEdit />}
                         size="xs"
                         variant="ghost"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleStartEdit(session);
                         }}
-                      />
+                      >
+                        <FaEdit />
+                      </IconButton>
                       <IconButton
                         aria-label="Delete"
-                        icon={<FaTrash />}
                         size="xs"
                         variant="ghost"
                         ml={1}
@@ -173,7 +179,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                           e.stopPropagation();
                           onDeleteSession(session.id);
                         }}
-                      />
+                      >
+                        <FaTrash />
+                      </IconButton>
                     </Flex>
                   )}
                 </Flex>

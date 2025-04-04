@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import ChatSidebar from './ChatSidebar';
-import { Message, ChatSession } from '../types/chat';
+import { Message, ChatSession, MessageRole } from '../types/chat';
 import useChat from '../hooks/useChat';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -218,7 +218,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ initialMessages = [] }) =
                   >
                     <ChatMessage 
                       message={message} 
-                      isLatest={index === messages.length - 1 && message.role === 'assistant'}
+                      isLatest={index === messages.length - 1 && message.role === MessageRole.ASSISTANT}
                     />
                   </MotionBox>
                 ))}

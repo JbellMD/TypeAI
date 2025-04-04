@@ -4,16 +4,12 @@ import { FaUser, FaRobot } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { formatCodeBlocks } from '../utils/chatUtils';
 import TypingAnimation from './TypingAnimation';
+import { Message, MessageRole } from '../types/chat';
 
 const MotionBox = motion(Box);
 
 interface ChatMessageProps {
-  message: {
-    id: string;
-    role: 'user' | 'assistant';
-    content: string;
-    timestamp: number;
-  };
+  message: Message;
   isLatest?: boolean;
 }
 
@@ -27,7 +23,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest = false }) 
     setFormattedContent(formatted);
     
     // Only show typing animation for the latest assistant message
-    if (message.role === 'assistant' && isLatest) {
+    if (message.role === MessageRole.ASSISTANT && isLatest) {
       setShowTyping(true);
     }
   }, [message, isLatest]);
@@ -38,10 +34,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest = false }) 
 
   const getBgColor = () => {
     switch (message.role) {
-      case 'user':
+      case MessageRole.USER:
         return 'var(--message-user-bg)';
-      case 'assistant':
+      case MessageRole.ASSISTANT:
         return 'var(--message-assistant-bg)';
+      case MessageRole.SYSTEM:
+        return 'var(--message-system-bg, gray.100)';
       default:
         return 'gray.100';
     }
@@ -49,9 +47,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest = false }) 
 
   const getIconElement = () => {
     switch (message.role) {
-      case 'user':
+      case MessageRole.USER:
         return <FaUser />;
-      case 'assistant':
+      case MessageRole.ASSISTANT:
         return <FaRobot />;
       default:
         return null;
@@ -60,10 +58,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest = false }) 
 
   const getName = () => {
     switch (message.role) {
-      case 'user':
+      case MessageRole.USER:
         return 'You';
-      case 'assistant':
+      case MessageRole.ASSISTANT:
         return 'TypeAI';
+      case MessageRole.SYSTEM:
+        return 'System';
       default:
         return '';
     }
@@ -75,11 +75,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest = false }) 
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       mb={4}
-      className={`message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
+      className={`message ${message.role === MessageRole.USER ? 'user-message' : 'assistant-message'}`}
     >
       <Flex>
         <Box
-          bg={message.role === 'user' ? 'blue.500' : 'gray.300'}
+          bg={message.role === MessageRole.USER ? 'blue.500' : 'gray.300'}
           color="white"
           borderRadius="full"
           p={2}
@@ -113,7 +113,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest = false }) 
       <Flex justifyContent="space-between" width="100%" mt={2}>
         <Text fontWeight="bold">{getName()}</Text>
         <Text fontSize="sm" color="gray.500">
-          {new Date(message.timestamp).toLocaleTimeString()}
+          {message.timestamp.toLocaleTimeString()}
         </Text>
       </Flex>
     </MotionBox>
