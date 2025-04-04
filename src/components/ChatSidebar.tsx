@@ -152,7 +152,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     <Text 
                       fontWeight={currentSessionId === session.id ? "bold" : "normal"}
                       fontSize="sm"
-                      isTruncated
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                      maxWidth="160px"
                     >
                       {session.title}
                     </Text>
