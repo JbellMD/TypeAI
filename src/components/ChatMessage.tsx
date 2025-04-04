@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Flex, Text, Avatar, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { FaUser, FaRobot } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
 import { Message, MessageRole } from '../types/chat';
@@ -10,24 +10,21 @@ interface ChatMessageProps {
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-  const userBgColor = useColorModeValue('gray.100', 'gray.700');
-  const assistantBgColor = useColorModeValue('blue.50', 'blue.900');
-  const systemBgColor = useColorModeValue('purple.50', 'purple.900');
-  
+  // Define colors based on role
   const getBgColor = () => {
     switch (message.role) {
       case MessageRole.USER:
-        return userBgColor;
+        return 'gray.100';
       case MessageRole.ASSISTANT:
-        return assistantBgColor;
+        return 'blue.50';
       case MessageRole.SYSTEM:
-        return systemBgColor;
+        return 'purple.50';
       default:
         return 'transparent';
     }
   };
   
-  const getIcon = () => {
+  const getIconElement = () => {
     switch (message.role) {
       case MessageRole.USER:
         return <FaUser />;
@@ -63,13 +60,16 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       width="100%"
     >
       <Flex alignItems="center" mb={2}>
-        <Avatar 
-          size="sm" 
-          icon={getIcon()} 
+        <Box 
           bg={message.role === MessageRole.USER ? 'blue.500' : 'green.500'} 
           color="white"
+          borderRadius="full"
+          p={2}
           mr={2}
-        />
+          fontSize="sm"
+        >
+          {getIconElement()}
+        </Box>
         <Flex justifyContent="space-between" width="100%">
           <Text fontWeight="bold">{getName()}</Text>
           <Text fontSize="sm" color="gray.500">

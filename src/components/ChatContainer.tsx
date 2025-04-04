@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Box, VStack, Text, Spinner, Center, Flex } from '@chakra-ui/react';
+import { Box, Flex, Text, Spinner, Center } from '@chakra-ui/react';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import { Message } from '../types/chat';
@@ -46,7 +46,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ initialMessages = [] }) =
             <Text color="gray.500">Start a new conversation</Text>
           </Center>
         ) : (
-          <VStack spacing={4} align="stretch">
+          <Flex direction="column" gap={4}>
             {messages.map((message) => (
               <ChatMessage key={message.id} message={message} />
             ))}
@@ -63,7 +63,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ initialMessages = [] }) =
               </Box>
             )}
             <div ref={messagesEndRef} />
-          </VStack>
+          </Flex>
         )}
       </Box>
       

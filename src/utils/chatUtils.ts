@@ -35,7 +35,7 @@ export const formatCodeBlocks = (text: string): string => {
   const inlineCodeRegex = /`([^`]+)`/g;
   
   // First handle triple backtick blocks
-  let formattedText = text.replace(codeBlockRegex, (match, code) => {
+  let formattedText = text.replace(codeBlockRegex, (_match, code) => {
     // Try to detect the language
     const firstLine = code.trim().split('\n')[0];
     const language = firstLine.match(/^[a-zA-Z0-9#]+$/) ? firstLine : '';
@@ -45,9 +45,9 @@ export const formatCodeBlocks = (text: string): string => {
   });
   
   // Then handle inline code blocks that aren't part of a triple backtick block
-  formattedText = formattedText.replace(inlineCodeRegex, (match, code) => {
+  formattedText = formattedText.replace(inlineCodeRegex, (_match, code) => {
     // Make sure this isn't part of a code block we already processed
-    if (match.includes('```')) return match;
+    if (_match.includes('```')) return _match;
     return '`' + code + '`';
   });
   

@@ -3,9 +3,8 @@ import {
   Box, 
   Textarea, 
   Button, 
-  Flex, 
-  IconButton,
-  useColorModeValue
+  Flex,
+  IconButton
 } from '@chakra-ui/react';
 import { FaPaperPlane, FaStop } from 'react-icons/fa';
 
@@ -24,9 +23,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
 }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
-  const bgColor = useColorModeValue('white', 'gray.700');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
   
   const handleSubmit = () => {
     if (message.trim() && !isLoading) {
@@ -56,9 +52,9 @@ const ChatInput: React.FC<ChatInputProps> = ({
       bottom={0} 
       width="100%" 
       p={4} 
-      bg={bgColor}
+      bg="white"
       borderTop="1px" 
-      borderColor={borderColor}
+      borderColor="gray.200"
     >
       <Flex direction="column">
         <Textarea
@@ -78,25 +74,26 @@ const ChatInput: React.FC<ChatInputProps> = ({
           <Box>
             {isLoading && onStopGeneration && (
               <Button
-                leftIcon={<FaStop />}
                 onClick={onStopGeneration}
                 colorScheme="red"
                 variant="outline"
                 size="sm"
               >
+                <Box mr={2}><FaStop /></Box>
                 Stop generating
               </Button>
             )}
           </Box>
           
           <IconButton
-            icon={<FaPaperPlane />}
             aria-label="Send message"
             colorScheme="blue"
-            isLoading={isLoading}
+            loading={isLoading}
             onClick={handleSubmit}
-            isDisabled={!message.trim() || isLoading}
-          />
+            disabled={!message.trim() || isLoading}
+          >
+            <FaPaperPlane />
+          </IconButton>
         </Flex>
       </Flex>
     </Box>
